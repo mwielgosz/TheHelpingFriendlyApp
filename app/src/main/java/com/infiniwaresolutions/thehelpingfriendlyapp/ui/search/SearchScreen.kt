@@ -16,7 +16,7 @@ fun SearchScreen() {
             .wrapContentSize(Alignment.Center)
     ) {
         Text(
-            text = "This is the Search Screen"
+            text = "This is the Search Screen\nFeature not implemented"
         )
     }
 }
