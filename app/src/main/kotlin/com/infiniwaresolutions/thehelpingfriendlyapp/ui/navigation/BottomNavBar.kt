@@ -24,7 +24,6 @@ fun BottomNavBar(
     val screens = listOf(
         BottomNavItem.AllShowsNav,
         BottomNavItem.SetlistsNav,
-        BottomNavItem.SearchNav
     )
 
     NavigationBar(
