@@ -94,7 +94,7 @@ class ShowDataDetailViewModelCollection @AssistedInject constructor(
             when (data) {
                 is DotNetSetlistData -> {
                     val sortedShowDataList: List<ShowData> =
-                        organizeDataFromJson(data.dotNetSongEntities)
+                        organizeDataFromJson(data.dotNetSongEntities, true)
                     currentState.copy(
                         isLoading = false,
                         showData = sortedShowDataList,

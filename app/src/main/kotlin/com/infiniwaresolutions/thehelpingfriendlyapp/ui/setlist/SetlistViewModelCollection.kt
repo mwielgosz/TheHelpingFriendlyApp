@@ -38,6 +38,7 @@ data class SetlistViewState(
 @HiltViewModel(assistedFactory = SetlistViewModelCollection.ViewModelFactory::class)
 class SetlistViewModelCollection @AssistedInject constructor(
     @Assisted val isSearch: Boolean,
+    @Assisted val showDate: String,
     private val getAllDotNetSetlistsUseCase: GetAllDotNetSetlistsUseCase,
     private val getAllDotNetSetlistsByLimit: GetAllDotNetSetlistsByLimitUseCase,
     private val getDotNetSearchByShowDateUseCase: GetDotNetSearchByShowDateUseCase
@@ -45,7 +46,7 @@ class SetlistViewModelCollection @AssistedInject constructor(
 
     @AssistedFactory
     interface ViewModelFactory {
-        fun create(isSearch: Boolean): SetlistViewModelCollection
+        fun create(isSearch: Boolean, showDate: String): SetlistViewModelCollection
     }
 
     private val _state = MutableStateFlow(SetlistViewState(isSearch = isSearch))
@@ -54,8 +55,8 @@ class SetlistViewModelCollection @AssistedInject constructor(
     private val _intentChannel = Channel<SetlistIntent>(Channel.UNLIMITED)
 
     init {
-        if (isSearch &&  state.value.showDate != null) {
-            sendIntent(SetlistIntent.GetSetlistSearchByShowDate(showDate = state.value.showDate!!))
+        if (isSearch && showDate != "") {
+            sendIntent(SetlistIntent.GetSetlistSearchByShowDate(showDate = showDate))
         } else {
             sendIntent(SetlistIntent.GetAllSetlists)
         }
@@ -105,7 +106,7 @@ class SetlistViewModelCollection @AssistedInject constructor(
             when (data) {
                 is DotNetSetlistData -> {
                     val sortedShowDataList: List<ShowData> =
-                        organizeDataFromJson(data.dotNetSongEntities)
+                        organizeDataFromJson(data.dotNetSongEntities, isSearch)
                     currentState.copy(
                         isLoading = false,
                         showData = sortedShowDataList,

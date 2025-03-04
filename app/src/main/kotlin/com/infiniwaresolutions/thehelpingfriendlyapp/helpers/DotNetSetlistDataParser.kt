@@ -3,21 +3,30 @@ package com.infiniwaresolutions.thehelpingfriendlyapp.helpers
 import android.util.Log
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.ShowData
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.DotNetSongData
-import kotlin.collections.lastIndex
 
 
 // Organize & convert messy DotNet JSON Data to a List<ShowData> object
-internal fun organizeDataFromJson(dotNetDotNetSongDataList: List<DotNetSongData>?): List<ShowData> {
+/**
+ * Returns [List] of [ShowData] compiled from messy Phish.net API [List] of [DotNetSongData] data.
+ * Pass [keepAllResults] to truncates the final result in [List] [DotNetSongData]
+ */
+internal fun organizeDataFromJson(
+    dotNetDotNetSongDataList: List<DotNetSongData>?,
+    keepAllResults: Boolean
+): List<ShowData> {
     val sortedShowDataList: MutableList<ShowData> = mutableListOf()
     var lastShowId: Int?
 
     // List of unique DotNetSetlist.Data objects by showId (only pull one element of each show's data)
     val uniqueDotNetSetlistDataIdList = dotNetDotNetSongDataList?.distinctBy { it.showId }
         ?.toMutableList()
-    // Find & remove all last show data from List before processing as it likely will be incomplete
-    uniqueDotNetSetlistDataIdList?.size?.let {
-        if (it > 1) {
-            uniqueDotNetSetlistDataIdList.removeAll { it.showId == uniqueDotNetSetlistDataIdList[uniqueDotNetSetlistDataIdList.lastIndex].showId }
+
+    if (!keepAllResults) {
+        // Find & remove all last show data from List before processing as it likely will be incomplete
+        uniqueDotNetSetlistDataIdList?.size?.let {
+            if (it > 1) {
+                uniqueDotNetSetlistDataIdList.removeAll { it.showId == uniqueDotNetSetlistDataIdList[uniqueDotNetSetlistDataIdList.lastIndex].showId }
+            }
         }
     }
 
