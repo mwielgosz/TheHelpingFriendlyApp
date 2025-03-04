@@ -47,7 +47,7 @@ fun ShowDataDetailScreen(
     ) {
         val context = LocalContext.current
 
-        if (state.showData.isNotEmpty() == true && !state.isLoading) {
+        if (state.showData.isNotEmpty() && !state.isLoading) {
 
             // Artist name
             state.showData.first().artistName?.let {

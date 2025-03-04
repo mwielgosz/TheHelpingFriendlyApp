@@ -8,11 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -109,19 +109,17 @@ fun SetlistCard(
                     .fillMaxWidth()
             ) {
                 Row(modifier = Modifier.fillMaxWidth()) {
-
                     // Artist name
                     showData.artistName?.let {
                         Text(
                             modifier = Modifier
-                                .padding(6.dp),
+                                .padding(6.dp)
+                                .weight(1f)
+                                .wrapContentWidth(Alignment.Start),
                             fontWeight = FontWeight.Bold,
                             text = it
                         )
                     }
-
-                    // Horizontal space
-                    Spacer(Modifier.weight(1f))
 
                     // Show date
                     showData.showDate?.let {
@@ -130,19 +128,35 @@ fun SetlistCard(
                         val formattedDate = date.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
                         Text(
                             modifier = Modifier
-                                .padding(6.dp),
+                                .padding(6.dp)
+                                .weight(1f)
+                                .wrapContentWidth(Alignment.End),
                             text = formattedDate
                         )
                     }
                 }
 
                 // Location
-                var stateOrCountry = showData.state
-                if (stateOrCountry == "") stateOrCountry = showData.country
-                Text(
-                    modifier = Modifier.padding(8.dp),
-                    text = "${showData.venue}\n${showData.city}, $stateOrCountry\n"
-                )
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .weight(1f)
+                            .wrapContentWidth(Alignment.Start),
+                        text = "${showData.venue}"
+                    )
+
+                    var stateOrCountry = showData.state
+                    if (stateOrCountry == "") stateOrCountry = showData.country
+                    Text(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .weight(1f)
+                            .wrapContentWidth(Alignment.End),
+                        textAlign = TextAlign.End,
+                        text = "${showData.city}, $stateOrCountry",
+                    )
+                }
 
                 // Build string with all setlist data
                 val songsStr = buildSetlistAnnotatedString(
