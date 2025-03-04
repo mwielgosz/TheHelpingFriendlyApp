@@ -27,6 +27,7 @@ sealed class AllShowsIntent {
 
 data class AllShowsViewState(
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val allShowsData: List<DotNetShow> = emptyList(),
     val showData: List<ShowData> = emptyList(),
     val errorMessage: String? = null
