@@ -22,11 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.infiniwaresolutions.thehelpingfriendlyapp.R
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.DotNetShow
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.BuildSetlistNotes
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.LoadingIndicator
@@ -57,7 +59,7 @@ fun AllShowsScreen(
             )
         }
     } else if (state.errorMessage?.isNotEmpty() == true || !state.isLoading) {
-        NoDataErrorText()
+        NoDataErrorText(stringResource(R.string.no_data_pull_refresh))
     }
 
     // Overlay loading indicator

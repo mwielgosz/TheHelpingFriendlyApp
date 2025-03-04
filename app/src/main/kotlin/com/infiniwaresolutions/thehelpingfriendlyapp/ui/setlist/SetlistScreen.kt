@@ -59,7 +59,11 @@ fun SetlistScreen(
             )
         }
     } else if (state.errorMessage?.isNotEmpty() == true || !state.isLoading) {
-        NoDataErrorText()
+        if (isSearch) {
+            NoDataErrorText(stringResource(R.string.no_data_for_search))
+        } else {
+            stringResource(R.string.no_data_pull_refresh)
+        }
     }
 
     // Overlay loading indicator

@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -32,8 +31,13 @@ import androidx.core.text.HtmlCompat
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.ShowData
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.SongData
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
+/**
+ * Returns a [CircularProgressIndicator] visual for loading data.
+ */
 @Composable
 fun LoadingIndicator() {
     Box(
@@ -45,10 +49,13 @@ fun LoadingIndicator() {
     }
 }
 
+/**
+ * Returns a [Composable] that displays [errorStr] text.
+ */
 @Composable
-fun NoDataErrorText() {
+fun NoDataErrorText(errorStr: String) {
     Text(
-        text = stringResource(R.string.no_data_pull_refresh),
+        text = errorStr,
         modifier = Modifier
             .fillMaxSize()
             .wrapContentSize(Alignment.Center),
@@ -56,7 +63,9 @@ fun NoDataErrorText() {
     )
 }
 
-
+/**
+ * Returns a [Composable] for a vertical ScrollView with Pull to Refresh capabilities.
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun PullToRefreshBox(
@@ -83,6 +92,9 @@ fun PullToRefreshBox(
     }
 }
 
+/**
+ * Returns a [Composable] for [setlistNotes] with optional [showHeader]
+ */
 @Composable
 fun BuildSetlistNotes(context: Context, setlistNotes: String, showHeader: Boolean) {
     if (setlistNotes != "") {
@@ -110,7 +122,10 @@ fun BuildSetlistNotes(context: Context, setlistNotes: String, showHeader: Boolea
     }
 }
 
-// Build an Annotated String with all Setlist Data
+/**
+ * Builds an [AnnotatedString] based on [ShowData] for setlist display.
+ * Can disable soundcheck with [includeSoundcheck] and footer with [includeFooter]
+ */
 internal fun buildSetlistAnnotatedString(
     context: Context,
     showData: ShowData,
@@ -168,4 +183,41 @@ internal fun buildSetlistAnnotatedString(
     }
 
     return songsStr
+}
+
+/**
+ * Returns formatted String of given [dateStr] in 'yyyy-MM-dd format or null if cannot format.
+ */
+fun isDateValidAndFormat(dateStr: String): String? {
+    val formats = arrayOf(
+        "yyyy-MM-dd",
+        "yyyy/MM/dd",
+        "yyyy.MM.dd",
+        "MM-dd-yyyy",
+        "MM/dd/yyyy",
+        "MM.dd.yyyy",
+        "yyyyMMdd",
+        "MMddyyyy",
+        "yyyyMMdd",
+        "M-d-yyyy",
+        "M/d/yyyy",
+        "M.d.yyyy",
+        "M-d-yy",
+        "M/d/yy",
+        "M.d.yy",
+        "yyyy-M-d",
+        "yyyy/M/d",
+        "yyyy.M.d"
+    )
+
+    for (format in formats) {
+        try {
+            val dateFormatter = DateTimeFormatter.ofPattern(format)
+            val date = LocalDate.parse(dateStr, dateFormatter)
+            return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        } catch (e: Exception) {
+            // Continue to the next format if parsing fails
+        }
+    }
+    return null // Return null if no format matches
 }
