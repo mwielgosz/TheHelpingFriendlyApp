@@ -21,7 +21,7 @@ class DotNetRepositoryImpl @Inject constructor(
     override suspend fun getDotNetSetlistByShowId(showId: Int?): Resource<DotNetSetlistData> =
         safeApiCall { dotNetApiService.getDotNetSetlistByShowId(showId = showId) }
 
-    override suspend fun getDotNetSearchByShowDate(showDate: String): Resource<DotNetSetlistData> =
+    override suspend fun getDotNetSearchByShowDate(showDate: String?): Resource<DotNetSetlistData> =
         safeApiCall { dotNetApiService.getDotNetSearchByShowDate(showDate = showDate) }
 
     // Safe API call handler with suspend

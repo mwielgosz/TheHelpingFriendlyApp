@@ -32,7 +32,10 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowDataDetailScreen(
-    viewModel: ShowDataDetailViewModelCollection = hiltViewModel()
+    showId: Int?,
+    viewModel: ShowDataDetailViewModelCollection = hiltViewModel<ShowDataDetailViewModelCollection, ShowDataDetailViewModelCollection.DetailViewModelFactory> { factory ->
+        factory.create(showId)
+    }
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 

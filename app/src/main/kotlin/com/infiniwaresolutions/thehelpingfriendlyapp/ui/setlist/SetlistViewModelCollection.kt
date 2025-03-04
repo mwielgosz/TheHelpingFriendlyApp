@@ -9,6 +9,9 @@ import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetAllDotNetSetlists
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetAllDotNetSetlistsUseCase
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetDotNetSearchByShowDateUseCase
 import com.infiniwaresolutions.thehelpingfriendlyapp.helpers.organizeDataFromJson
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 sealed class SetlistIntent {
     data object GetAllSetlists : SetlistIntent()
@@ -25,25 +27,38 @@ sealed class SetlistIntent {
 }
 
 data class SetlistViewState(
+    val isSearch: Boolean,
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val showData: List<ShowData> = emptyList(),
+    val showDate: String? = null,
     val errorMessage: String? = null
 )
 
-@HiltViewModel
-class SetlistViewModelCollection @Inject constructor(
+@HiltViewModel(assistedFactory = SetlistViewModelCollection.ViewModelFactory::class)
+class SetlistViewModelCollection @AssistedInject constructor(
+    @Assisted val isSearch: Boolean,
     private val getAllDotNetSetlistsUseCase: GetAllDotNetSetlistsUseCase,
     private val getAllDotNetSetlistsByLimit: GetAllDotNetSetlistsByLimitUseCase,
     private val getDotNetSearchByShowDateUseCase: GetDotNetSearchByShowDateUseCase
 ) : ViewModel() {
-    private val _state = MutableStateFlow(SetlistViewState())
+
+    @AssistedFactory
+    interface ViewModelFactory {
+        fun create(isSearch: Boolean): SetlistViewModelCollection
+    }
+
+    private val _state = MutableStateFlow(SetlistViewState(isSearch = isSearch))
     val state: StateFlow<SetlistViewState> = _state
 
     private val _intentChannel = Channel<SetlistIntent>(Channel.UNLIMITED)
 
     init {
-        sendIntent(SetlistIntent.GetAllSetlists)
+        if (isSearch &&  state.value.showDate != null) {
+            sendIntent(SetlistIntent.GetSetlistSearchByShowDate(showDate = state.value.showDate!!))
+        } else {
+            sendIntent(SetlistIntent.GetAllSetlists)
+        }
         handleIntents()
     }
 

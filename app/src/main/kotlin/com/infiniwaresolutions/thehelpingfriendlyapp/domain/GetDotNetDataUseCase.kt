@@ -25,6 +25,6 @@ class GetDotNetSetlistByShowIdUseCase @Inject constructor(private val repository
 }
 
 class GetDotNetSearchByShowDateUseCase @Inject constructor(private val repository: DotNetRepository) {
-    suspend operator fun invoke(showDate: String): Resource<DotNetSetlistData> =
+    suspend operator fun invoke(showDate: String?): Resource<DotNetSetlistData> =
         repository.getDotNetSearchByShowDate(showDate)
 }

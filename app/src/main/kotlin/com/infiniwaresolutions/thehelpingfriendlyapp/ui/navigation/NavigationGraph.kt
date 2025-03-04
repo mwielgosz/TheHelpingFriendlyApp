@@ -7,13 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.ShowData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.DotNetShow
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.allShows.AllShowsScreen
-import com.infiniwaresolutions.thehelpingfriendlyapp.ui.search.SearchScreen
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.setlist.SetlistScreen
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.show.ShowDataDetailScreen
 
@@ -32,13 +32,14 @@ fun NavigationGraph(
             isBackButtonVisible(false)
             isSearchButtonVisible(false)
             AllShowsScreen(
-                onShowCardClicked = { showId ->
+                onShowCardClicked = { show ->
                     Log.d("NavGraph", "AllShows - Show card nav graph click")
-                    navController.navigate(Routes.SetlistDetailRoute.route + "/${showId}")
+                    navController.navigate(show)
                 }
             )
         }
 
+        // TODO: Try to merge these two with a route argument
         composable(BottomNavItem.SetlistsNav.route) {
             topAppBarTitle(stringResource(R.string.app_name))
             isBottomBarVisible(true)
@@ -47,10 +48,10 @@ fun NavigationGraph(
             Surface(
                 modifier = Modifier.fillMaxSize()
             ) {
-                SetlistScreen(
-                    onShowCardClicked = { showId ->
+                SetlistScreen(isSearch = false,
+                    onShowCardClicked = { show ->
                         Log.d("NavGraph", "Setlist - Show card nav graph click")
-                        navController.navigate(Routes.SetlistDetailRoute.route + "/${showId}")
+                        navController.navigate(show)
                     }
                 )
             }
@@ -61,13 +62,34 @@ fun NavigationGraph(
             isBottomBarVisible(true)
             isBackButtonVisible(false)
             isSearchButtonVisible(true)
-            SearchScreen()
+            Surface(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                SetlistScreen(isSearch = true,
+                    onShowCardClicked = { show ->
+                        Log.d("NavGraph", "Setlist - Show card nav graph click")
+                        navController.navigate(show)
+                    }
+                )
+            }
         }
 
-        composable(
-            "${Routes.SetlistDetailRoute.route}/{showId}",
-            arguments = listOf(navArgument("showId") { type = NavType.IntType })
-        ) { backStackEntry ->
+        // TODO: Confirm data types into one (if possible from API)
+        // From AllShows
+        composable<DotNetShow> { backStackEntry ->
+            val showData: DotNetShow = backStackEntry.toRoute()
+            ShowDataDetailScreen(showData.showId)
+        }
+
+        // From Setlist
+        composable<ShowData> { backStackEntry ->
+            val showData: ShowData = backStackEntry.toRoute()
+            ShowDataDetailScreen(showData.showId)
+        }
+        //composable(
+        //    "${Routes.SetlistDetailRoute.route}/{showId}",
+        //    arguments = listOf(navArgument("showId") { type = NavType.IntType })
+        /*) { backStackEntry ->
             val showId = backStackEntry.arguments?.getInt("showId", 0)
             if (showId != 0) {
                 Log.d("NavGraph", "Got ShowID: $showId")
@@ -79,9 +101,9 @@ fun NavigationGraph(
                 isBackButtonVisible(true)
                 isSearchButtonVisible(false)
                 topAppBarTitle(stringResource(R.string.setlist_info))
-                ShowDataDetailScreen()
+                ShowDataDetailScreen(showId = showId)
             }
-        }
+        }*/
 
         /*composable<ShowData> { backStackEntry ->
             Log.d("NavGraph", "Got showData from SetlistScreen")

@@ -38,8 +38,11 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetlistScreen(
-    viewModel: SetlistViewModelCollection = hiltViewModel(),
-    onShowCardClicked: (Int?) -> Unit
+    isSearch: Boolean,
+    viewModel: SetlistViewModelCollection = hiltViewModel<SetlistViewModelCollection, SetlistViewModelCollection.ViewModelFactory> { factory ->
+        factory.create(isSearch)
+    },
+    onShowCardClicked: (ShowData) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -51,7 +54,7 @@ fun SetlistScreen(
             SetlistCardList(
                 state = state,
                 onCardClicked = { show ->
-                    onShowCardClicked(show.showId)
+                    onShowCardClicked(show)
                 }
             )
         }

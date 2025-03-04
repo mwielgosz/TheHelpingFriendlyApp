@@ -24,5 +24,5 @@ interface DotNetRepository {
     suspend fun getAllDotNetSetlists(): Resource<DotNetSetlistData>
     suspend fun getDotNetSetlistsByLimit(@Query("limit") limit: Int): Resource<DotNetSetlistData>
     suspend fun getDotNetSetlistByShowId(@Query("showid") showId: Int?): Resource<DotNetSetlistData>
-    suspend fun getDotNetSearchByShowDate(@Path("showDate") showDate: String): Resource<DotNetSetlistData>
+    suspend fun getDotNetSearchByShowDate(@Path("showDate") showDate: String?): Resource<DotNetSetlistData>
 }

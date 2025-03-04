@@ -1,7 +1,6 @@
 package com.infiniwaresolutions.thehelpingfriendlyapp.ui.show
 
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.ShowData
@@ -9,6 +8,9 @@ import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.DotNetSetlistD
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.Resource
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetDotNetSetlistByShowIdUseCase
 import com.infiniwaresolutions.thehelpingfriendlyapp.helpers.organizeDataFromJson
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +18,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 sealed class ShowDataDetailIntent {
@@ -31,12 +32,17 @@ data class ShowDataDetailViewState(
     val errorMessage: String? = null
 )
 
-@HiltViewModel
-class ShowDataDetailViewModelCollection @Inject constructor(
+@HiltViewModel(assistedFactory = ShowDataDetailViewModelCollection.DetailViewModelFactory::class)
+class ShowDataDetailViewModelCollection @AssistedInject constructor(
+    @Assisted val showId: Int?,
     private val getDotNetSetlistByShowIdUseCase: GetDotNetSetlistByShowIdUseCase,
-    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val showId = savedStateHandle.get<Int>("showId")
+
+    @AssistedFactory
+    interface DetailViewModelFactory {
+        fun create(showId: Int?): ShowDataDetailViewModelCollection
+    }
+
     private val _state = MutableStateFlow(ShowDataDetailViewState())
     val state: StateFlow<ShowDataDetailViewState> = _state
 

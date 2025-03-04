@@ -47,7 +47,7 @@ interface DotNetApiService {
     // Get songs by show date from Setlists endpoint - showDate in yyyy-mm-dd format
     @GET("setlists/showdate/{showDate}.json")
     suspend fun getDotNetSearchByShowDate(
-        @Path("showDate") showDate: String,
+        @Path("showDate") showDate: String?,
         @Query("direction") direction: String = "desc",
         @Query("apikey") apikey: String = PHISH_NET_API_KEY
     ): Response<DotNetSetlistData>
