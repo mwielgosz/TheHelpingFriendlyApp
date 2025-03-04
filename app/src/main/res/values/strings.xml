@@ -14,6 +14,7 @@
     <string name="no_data_for_search">Search returned no results!</string>
     <string name="no_data_pull_refresh">No data found\nPull from top to refresh</string>
 
+    <string name="setlist">Setlist</string>
     <string name="setlist_soundcheck">Soundcheck:</string>
     <string name="setlist_set">Set</string>
     <string name="setlist_set_1">Set 1: </string>

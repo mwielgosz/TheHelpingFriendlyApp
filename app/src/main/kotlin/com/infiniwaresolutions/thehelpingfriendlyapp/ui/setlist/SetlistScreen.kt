@@ -21,11 +21,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.infiniwaresolutions.thehelpingfriendlyapp.R
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.ShowData
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.LoadingIndicator
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.NoDataErrorText
@@ -39,8 +41,9 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun SetlistScreen(
     isSearch: Boolean,
+    showDate: String,
     viewModel: SetlistViewModelCollection = hiltViewModel<SetlistViewModelCollection, SetlistViewModelCollection.ViewModelFactory> { factory ->
-        factory.create(isSearch)
+        factory.create(isSearch, showDate)
     },
     onShowCardClicked: (ShowData) -> Unit
 ) {

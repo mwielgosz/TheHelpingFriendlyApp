@@ -3,6 +3,7 @@ package com.infiniwaresolutions.thehelpingfriendlyapp
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -39,8 +40,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.isDateValidAndFormat
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.navigation.BottomNavBar
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.navigation.NavigationGraph
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.navigation.Routes
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.search.AppBarSearchField
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.theme.DarkColorScheme
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.theme.LightColorScheme
@@ -87,6 +90,7 @@ class MainActivity : ComponentActivity() {
                             },
                             title = {
                                 if (searchFieldActive) {
+                                    val context = LocalContext.current
                                     AppBarSearchField(
                                         value = searchBarInput,
                                         onValueChange = { newValue -> searchBarInput = newValue },
@@ -101,9 +105,18 @@ class MainActivity : ComponentActivity() {
                                                 TAG,
                                                 "SEARCH ENTER PRESSED. INPUT TEXT: $searchBarInput"
                                             )
-                                            //navController.navigate(BottomNavItem.Search.route)
-                                            searchBarInput = ""
-                                            searchFieldActive = false
+                                            val validDate = isDateValidAndFormat(searchBarInput)
+                                            if (validDate == null) {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Invalid date format",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            } else {
+                                                searchFieldActive = false
+                                                navController.navigate(Routes.SearchScreenRoute.route + "/$validDate")
+                                                searchBarInput = ""
+                                            }
                                         })
                                     )
                                 } else {
