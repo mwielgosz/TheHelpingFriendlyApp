@@ -1,9 +1,17 @@
 package com.infiniwaresolutions.thehelpingfriendlyapp.ui
 
 import android.content.Context
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -18,6 +26,32 @@ import androidx.core.text.HtmlCompat
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.ShowData
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.SongData
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun PullToRefreshBox(
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    modifier: Modifier = Modifier,
+    state: PullToRefreshState = rememberPullToRefreshState(),
+    contentAlignment: Alignment = Alignment.TopStart,
+    indicator: @Composable BoxScope.() -> Unit = {
+        Indicator(
+            modifier = Modifier.align(Alignment.TopCenter),
+            isRefreshing = isRefreshing,
+            state = state
+        )
+    },
+    content: @Composable BoxScope.() -> Unit
+) {
+    Box(
+        modifier.pullToRefresh(state = state, isRefreshing = isRefreshing, onRefresh = onRefresh),
+        contentAlignment = contentAlignment
+    ) {
+        content()
+        indicator()
+    }
+}
 
 @Composable
 fun BuildSetlistNotes(context: Context, setlistNotes: String, showHeader: Boolean) {

@@ -25,6 +25,7 @@ sealed class ShowDataDetailIntent {
 
 data class ShowDataDetailViewState(
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val showId: Int? = null,
     val showData: List<ShowData> = emptyList(),
     val errorMessage: String? = null

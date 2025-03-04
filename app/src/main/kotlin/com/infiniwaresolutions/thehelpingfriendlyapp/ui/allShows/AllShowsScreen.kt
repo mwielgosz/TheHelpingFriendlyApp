@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,9 +36,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.DotNetShow
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.BuildSetlistNotes
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.PullToRefreshBox
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllShowsScreen(
     viewModel: AllShowsViewModelCollection = hiltViewModel(),
@@ -46,21 +49,25 @@ fun AllShowsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     if (state.allShowsData.isNotEmpty() && !state.isLoading) {
-        ShowCardList(
-            state = state,
-            onCardClicked = { show ->
-                Log.d("AllShowsScreen", "Show card clicked for id: ${show.showId}")
-                viewModel.sendIntent(AllShowsIntent.GetSetlistById(show.showId))
-                onShowCardClicked(show.showId)
-            }
-        )
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { viewModel.sendIntent(AllShowsIntent.GetAllShows) },
+        ) {
+            ShowCardList(
+                state = state,
+                onCardClicked = { show ->
+                    Log.d("AllShowsScreen", "Show card clicked for id: ${show.showId}")
+                    viewModel.sendIntent(AllShowsIntent.GetSetlistById(show.showId))
+                    onShowCardClicked(show.showId)
+                }
+            )
+        }
     } else if (!state.isLoading || state.errorMessage?.isNotEmpty() == true) {
         Text(
             text = stringResource(R.string.no_data_pull_refresh),
             modifier = Modifier
                 .fillMaxSize()
                 .wrapContentSize(Alignment.Center),
-            //style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )
     }

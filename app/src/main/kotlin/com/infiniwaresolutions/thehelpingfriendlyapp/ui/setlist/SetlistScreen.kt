@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,11 +34,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.ShowData
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.PullToRefreshBox
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.buildSetlistAnnotatedString
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetlistScreen(
     viewModel: SetlistViewModelCollection = hiltViewModel(),
@@ -46,12 +49,17 @@ fun SetlistScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     if (state.showData.isNotEmpty() && !state.isLoading) {
-        SetlistCardList(
-            state = state,
-            onCardClicked = { show ->
-                onShowCardClicked(show.showId)
-            }
-        )
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { viewModel.sendIntent(SetlistIntent.GetAllSetlists) },
+        ) {
+            SetlistCardList(
+                state = state,
+                onCardClicked = { show ->
+                    onShowCardClicked(show.showId)
+                }
+            )
+        }
     } else if (!state.isLoading || state.errorMessage?.isNotEmpty() == true) {
         Text(
             text = stringResource(R.string.no_data_pull_refresh),

@@ -26,6 +26,7 @@ sealed class SetlistIntent {
 
 data class SetlistViewState(
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val showData: List<ShowData> = emptyList(),
     val errorMessage: String? = null
 )
