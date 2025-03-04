@@ -63,8 +63,8 @@ fun ShowDataDetailScreen(
             // Show date
             state.showData.first().showDate?.let { date ->
                 // Format date from "yyyy-mm-dd" to "January 1, 2025"
-                val date = LocalDate.parse(date)
-                val formattedDate = date.format(DateTimeFormatter.ofPattern("MMMM d, yyyy"))
+                val formattedDate =
+                    LocalDate.parse(date).format(DateTimeFormatter.ofPattern("MMMM d, yyyy"))
                 Text(
                     modifier = Modifier
                         .padding(6.dp),

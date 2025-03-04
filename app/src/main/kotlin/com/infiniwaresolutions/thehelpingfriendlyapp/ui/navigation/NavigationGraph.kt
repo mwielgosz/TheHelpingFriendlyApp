@@ -34,7 +34,7 @@ fun NavigationGraph(
             AllShowsScreen(
                 onShowCardClicked = { showId ->
                     Log.d("NavGraph", "AllShows - Show card nav graph click")
-                    navController.navigate(Routes.SetlistDetailRoute.route.toString() + "/${showId}")
+                    navController.navigate(Routes.SetlistDetailRoute.route + "/${showId}")
                 }
             )
         }
@@ -50,7 +50,7 @@ fun NavigationGraph(
                 SetlistScreen(
                     onShowCardClicked = { showId ->
                         Log.d("NavGraph", "Setlist - Show card nav graph click")
-                        navController.navigate(Routes.SetlistDetailRoute.route.toString() + "/${showId}")
+                        navController.navigate(Routes.SetlistDetailRoute.route + "/${showId}")
                     }
                 )
             }
