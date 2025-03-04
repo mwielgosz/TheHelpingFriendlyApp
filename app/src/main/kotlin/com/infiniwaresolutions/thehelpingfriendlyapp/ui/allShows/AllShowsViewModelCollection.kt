@@ -1,14 +1,11 @@
 package com.infiniwaresolutions.thehelpingfriendlyapp.ui.allShows
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.ShowData
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.DotNetShow
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.DotNetShowData
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.Resource
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetAllDotNetShowsUseCase
-import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetDotNetSetlistByShowIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,21 +19,18 @@ import javax.inject.Inject
 
 sealed class AllShowsIntent {
     data object GetAllShows : AllShowsIntent()
-    data class GetSetlistById(val showId: Int?) : AllShowsIntent()
 }
 
 data class AllShowsViewState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val allShowsData: List<DotNetShow> = emptyList(),
-    val showData: List<ShowData> = emptyList(),
     val errorMessage: String? = null
 )
 
 @HiltViewModel
 class AllShowsViewModelCollection @Inject constructor(
     private val getAllDotNetShowsUseCase: GetAllDotNetShowsUseCase,
-    private val getDotNetSetlistByShowIdUseCase: GetDotNetSetlistByShowIdUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(AllShowsViewState())
     val state: StateFlow<AllShowsViewState> = _state
@@ -59,16 +53,6 @@ class AllShowsViewModelCollection @Inject constructor(
             _intentChannel.consumeAsFlow().collect { intent ->
                 when (intent) {
                     is AllShowsIntent.GetAllShows -> executeSuspend { getAllDotNetShowsUseCase() }
-                    is AllShowsIntent.GetSetlistById -> executeSuspend {
-                        _state.update { it.copy(isLoading = true) }
-                        Log.d(
-                            "AllShowsSViewModelCollection",
-                            "Intent received for show id: ${intent.showId}"
-                        )
-                        getDotNetSetlistByShowIdUseCase(
-                            intent.showId
-                        )
-                    }
                 }
             }
         }

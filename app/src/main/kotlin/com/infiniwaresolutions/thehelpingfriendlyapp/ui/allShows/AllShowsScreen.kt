@@ -39,7 +39,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun AllShowsScreen(
     viewModel: AllShowsViewModelCollection = hiltViewModel(),
-    onShowCardClicked: (Int?) -> Unit
+    onShowCardClicked: (DotNetShow) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -52,8 +52,7 @@ fun AllShowsScreen(
                 state = state,
                 onCardClicked = { show ->
                     Log.d("AllShowsScreen", "Show card clicked for id: ${show.showId}")
-                    viewModel.sendIntent(AllShowsIntent.GetSetlistById(show.showId))
-                    onShowCardClicked(show.showId)
+                    onShowCardClicked(show)
                 }
             )
         }
