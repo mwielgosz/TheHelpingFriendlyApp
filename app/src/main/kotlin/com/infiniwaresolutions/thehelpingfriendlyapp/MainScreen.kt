@@ -2,7 +2,6 @@ package com.infiniwaresolutions.thehelpingfriendlyapp
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -94,17 +93,12 @@ class MainActivity : ComponentActivity() {
                                     AppBarSearchField(
                                         value = searchBarInput,
                                         onValueChange = { newValue -> searchBarInput = newValue },
-                                        hint = getString(R.string.search_by_date),
+                                        hint = getString(R.string.search_setlists_by_date),
                                         keyboardOptions = KeyboardOptions(
                                             imeAction = ImeAction.Search,
                                             keyboardType = KeyboardType.Number
                                         ),
                                         keyboardActions = KeyboardActions(onSearch = {
-                                            Log.d(TAG, "Search called")
-                                            Log.d(
-                                                TAG,
-                                                "SEARCH ENTER PRESSED. INPUT TEXT: $searchBarInput"
-                                            )
                                             val validDate = isDateValidAndFormat(searchBarInput)
                                             if (validDate == null) {
                                                 Toast.makeText(
@@ -128,7 +122,6 @@ class MainActivity : ComponentActivity() {
                                 if (searchButtonVisible) {
                                     IconButton(onClick = {
                                         // Search action button pressed by user
-                                        Log.d(TAG, "Search action button Pressed")
                                         searchFieldActive = !searchFieldActive
                                         searchBarInput = ""
                                     }) {

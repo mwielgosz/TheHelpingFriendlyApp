@@ -6,7 +6,7 @@
     <string name="all_shows">All Shows</string>
     <string name="search">Search</string>
     <string name="search_icon">Search icon</string>
-    <string name="search_by_date">Search by date</string>
+    <string name="search_setlists_by_date">Search setlists by date</string>
     <string name="setlist_info">Setlist Information</string>
 
     <string name="loading">Loading</string>
