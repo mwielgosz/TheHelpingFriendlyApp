@@ -21,11 +21,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.BuildPhishNetClickableUrlText
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.BuildSetlistAndFooterAnnotatedString
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.BuildSetlistNotes
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.LoadingIndicator
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.NoDataErrorText
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.PullToRefreshBox
-import com.infiniwaresolutions.thehelpingfriendlyapp.ui.buildSetlistAndFooterAnnotatedString
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -38,8 +39,6 @@ fun ShowDataDetailScreen(
     }
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-
-    val context = LocalContext.current
 
     if (state.dotNetData.isNotEmpty() && !state.isLoading) {
         Column(
@@ -80,40 +79,22 @@ fun ShowDataDetailScreen(
                     }
 
                     // Location
+                    var stateOrCountry = state.dotNetData.first().state
+                    if (stateOrCountry == "") stateOrCountry = state.dotNetData.first().country
                     Text(
-                        modifier = Modifier.padding(6.dp),
+                        modifier = Modifier
+                            .padding(6.dp),
                         fontSize = 18.sp,
-                        text = "${state.dotNetData.first().venue}\n${state.dotNetData.first().city}, ${state.dotNetData.first().state}\n"
+                        text = "${state.dotNetData.first().city}, $stateOrCountry",
                     )
 
-                    // Soundcheck, setlist, and footnote builder
-                    val setlistFooterBuilder = buildSetlistAndFooterAnnotatedString(
+                    // Soundcheck, setlist, and footnotes
+                    BuildSetlistAndFooterAnnotatedString(
+                        context = LocalContext.current,
                         dotNetData = state.dotNetData,
                         includeSoundcheck = true,
-                        includeFootnotes = true,
+                        includeFootnotes = true
                     )
-
-                    // Setlist
-                    Text(
-                        modifier = Modifier.padding(6.dp),
-                        text = setlistFooterBuilder.first
-                    )
-
-                    // Footnotes
-                    // Include 'footnote' meanings if enabled & present: "[1] This is a footer."
-                    if (setlistFooterBuilder.second.isNotEmpty()) {
-                        Text(
-                            modifier = Modifier.padding(start = 6.dp, end = 6.dp),
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            text = "\n${context.resources.getString(R.string.setlist_footnotes)}"
-                        )
-
-                        Text(
-                            modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-                            text = setlistFooterBuilder.second
-                        )
-                    }
 
                     // Setlist notes
                     BuildSetlistNotes(
@@ -121,6 +102,13 @@ fun ShowDataDetailScreen(
                         state.dotNetData.first().setlistNotes.toString(),
                         true
                     )
+
+                    // URL for phish.net webpage
+                    state.dotNetData.first().permalink?.let {
+                        BuildPhishNetClickableUrlText(
+                            LocalContext.current, it
+                        )
+                    }
                 }
             }
         }

@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -28,10 +29,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.BuildSetlistAndFooterAnnotatedString
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.LoadingIndicator
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.NoDataErrorText
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.PullToRefreshBox
-import com.infiniwaresolutions.thehelpingfriendlyapp.ui.buildSetlistAndFooterAnnotatedString
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -158,19 +159,13 @@ fun SetlistCard(
                     )
                 }
 
-                // Soundcheck, setlist, and footnote builder
-                val setlistFooterBuilder = buildSetlistAndFooterAnnotatedString(
+                // Soundcheck, setlist, and footnotes
+                BuildSetlistAndFooterAnnotatedString(
+                    context = LocalContext.current,
                     dotNetData = dotNetData,
                     includeSoundcheck = true,
-                    includeFootnotes = false,
+                    includeFootnotes = false
                 )
-
-                // Setlist
-                Text(
-                    modifier = Modifier.padding(6.dp),
-                    text = setlistFooterBuilder.first
-                )
-
             }
         }
     )

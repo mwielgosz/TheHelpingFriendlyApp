@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
@@ -19,11 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,7 +96,117 @@ fun PullToRefreshBox(
 }
 
 /**
- * Returns a [Composable] for [setlistNotes] with optional [showHeader]
+ * Builds a [Composable] based on [DotNetSetlistSongData] for soundcheck, setlist, and footer display.
+ * Can disable soundcheck with [includeSoundcheck] and footer with [includeFootnotes]
+ */
+@Composable
+fun BuildSetlistAndFooterAnnotatedString(
+    context: Context,
+    dotNetData: List<DotNetSetlistSongData>,
+    includeSoundcheck: Boolean,
+    includeFootnotes: Boolean,
+) {
+    val footnoteAnnotatedStringBuilder = AnnotatedString.Builder("")
+    val footnoteList = mutableListOf<String>()
+
+    val setlistAnnotatedString: AnnotatedString = buildAnnotatedString {
+        var lastSet = "1"
+
+        // Include 'soundcheck' header & text if enabled & present: "Soundcheck: song1, song2"
+        if (includeSoundcheck && dotNetData.first().soundcheck != "") {
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                append(context.resources.getString(R.string.setlist_soundcheck))
+            }
+            append(" ${dotNetData.first().soundcheck}\n")
+        }
+
+        // First set text: "Set 1: " - BOLD
+        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp)) {
+            append("${context.resources.getString(R.string.setlist_set_1)} ")
+        }
+
+        for (song in dotNetData) {
+            // Add new set name: "Encore: " - BOLD
+            if (lastSet != song.set) {
+                appendLine()
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp)) {
+                    if (song.set == "e") {
+                        append("\n${context.resources.getString(R.string.setlist_encore)} ")
+                    } else if (song.set != "1") {
+                        append("\n${context.resources.getString(R.string.setlist_set)} ${song.set}: ")
+                    }
+                }
+            }
+
+            // Add song name
+            append(song.songName)
+
+            // Include 'footer' markings if enabled & present: "[1]" - BOLD & string to builder
+            if (includeFootnotes) {
+                val footnote: String = song.footnote.toString()
+                if (footnote != "") {
+                    if (!footnoteList.contains(footnote)) {
+                        // Add footnote if not already in list
+                        footnoteList.add(footnote)
+                        val footerIdx = footnoteList.indexOf(footnote) + 1
+
+                        // Append footnote number - BOLD
+                        footnoteAnnotatedStringBuilder.withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            // Put newline before next footnote if more than one
+                            if (footnoteList.size > 1) {
+                                footnoteAnnotatedStringBuilder.append("\n[${footerIdx}] ")
+                            } else {
+                                footnoteAnnotatedStringBuilder.append("[${footerIdx}] ")
+                            }
+                        }
+
+                        // Append footnote string
+                        footnoteAnnotatedStringBuilder.append(footnote)
+                    }
+
+                    // Get and add footnote number to setlist string
+                    val footerIdx = footnoteList.indexOf(footnote) + 1
+                    if (footerIdx != 0) {
+                        withStyle(style = SpanStyle(baselineShift = BaselineShift.Superscript)) {
+                            append("[$footerIdx]")
+                        }
+                    }
+                }
+            }
+
+            // Add 'Transition' mark: " > "
+            append(song.transMark)
+            lastSet = song.set.toString()
+
+        }
+    }
+
+    Text(
+        modifier = Modifier.padding(start = 6.dp, top = 24.dp, end = 6.dp),
+        text = setlistAnnotatedString
+    )
+
+    if (includeFootnotes && footnoteList.size > 0) {
+        Text(
+            modifier = Modifier.padding(start = 6.dp, top = 24.dp, end = 6.dp),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            text = context.resources.getString(R.string.setlist_footnotes)
+        )
+
+        Text(
+            modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+            text = footnoteAnnotatedStringBuilder.toAnnotatedString()
+        )
+    }
+}
+
+/**
+ * Builds a [Composable] for [setlistNotes] with optional [showHeader]
  */
 @Composable
 fun BuildSetlistNotes(context: Context, setlistNotes: String, showHeader: Boolean) {
@@ -102,10 +216,10 @@ fun BuildSetlistNotes(context: Context, setlistNotes: String, showHeader: Boolea
         // Setlist Notes Header
         if (showHeader) {
             Text(
-                modifier = Modifier.padding(start = 6.dp, end = 6.dp),
+                modifier = Modifier.padding(start = 6.dp, top = 24.dp, end = 6.dp),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                text = "\n${context.resources.getString(R.string.setlist_notes)}"
+                text = context.resources.getString(R.string.setlist_notes)
             )
         } else notesAlignment = TextAlign.Center
 
@@ -122,90 +236,31 @@ fun BuildSetlistNotes(context: Context, setlistNotes: String, showHeader: Boolea
 }
 
 /**
- * Builds an [AnnotatedString] based on [DotNetSetlistSongData] for setlist display.
- * Can disable soundcheck with [includeSoundcheck] and footer with [includeFootnotes]
- * Returns [Pair] of [AnnotatedString] [AnnotatedString] for rich display
+ * Builds a [Composable] with a clickable URL for phish.net website
  */
-internal fun buildSetlistAndFooterAnnotatedString(
-    dotNetData: List<DotNetSetlistSongData>,
-    includeSoundcheck: Boolean,
-    includeFootnotes: Boolean,
-): Pair<AnnotatedString, AnnotatedString> {
-    val footnoteAnnotatedStringBuilder = AnnotatedString.Builder("")
-    val footnoteList = mutableListOf<String>()
-
-    val setlistAnnotatedString: AnnotatedString = buildAnnotatedString {
-        var lastSet = "1"
-
-        // Include 'soundcheck' header & text if enabled & present: "Soundcheck: song1, song2"
-        if (includeSoundcheck && dotNetData.first().soundcheck != "") {
-            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                append("Soundcheck:")
-            }
-            append(" ${dotNetData.first().soundcheck}\n")
-        }
-
-        // First set text: "Set 1: " - BOLD
-        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-            append("Set 1: ")
-        }
-
-        for (song in dotNetData) {
-            // Add new set name: "Encore: " - BOLD
-            if (lastSet != song.set) {
-                append("\n")
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    if (song.set == "e") {
-                        append("\nEncore: ")
-                    } else if (song.set != "1") {
-                        append("\nSet ${song.set}: ")
-                    }
-                }
-            }
-
-            // Add song name
-            append(song.songName)
-
-            // Include 'footer' markings if enabled & present: "[1]" - BOLD & string to builder
-            if (includeFootnotes) {
-                if (song.footnote != "") {
-                    if (!footnoteList.contains(song.footnote)) {
-                        // Add if not already in list
-                        song.footnote?.let { footnoteList.add(it) }
-                        val footerIdx = footnoteList.indexOf(song.footnote) + 1
-
-                        // Append footnote number
-                        footnoteAnnotatedStringBuilder.withStyle(
-                            style = SpanStyle(
-                                fontWeight = FontWeight.Bold
-                            )
-                        ) {
-                            footnoteAnnotatedStringBuilder.append("[${footerIdx}] ")
-                        }
-                        // Append footnote string
-                        footnoteAnnotatedStringBuilder.append(song.footnote)
-                        if (song.uniqueId != dotNetData.last().uniqueId) {
-                            footnoteAnnotatedStringBuilder.appendLine()
-                        }
-                    }
-                    // Get and add footnote number to setlist string
-                    val footerIdx = footnoteList.indexOf(song.footnote) + 1
-                    if (footerIdx != 0) {
-                        withStyle(style = SpanStyle(baselineShift = BaselineShift.Superscript)) {
-                            append("[$footerIdx]")
-                        }
-                    }
-                }
-            }
-
-            // Add 'Transition' mark: " > "
-            append(song.transMark)
-            lastSet = song.set.toString()
-
-        }
+@Composable
+fun BuildPhishNetClickableUrlText(context: Context, url: String) {
+    val annotatedString = buildAnnotatedString {
+        pushStringAnnotation(tag = url, annotation = url)
+        withLink(
+            LinkAnnotation.Url(
+                url = url,
+                styles = TextLinkStyles(style = SpanStyle(color = MaterialTheme.colorScheme.primary))
+            )
+        ) { append(url) }
     }
 
-    return Pair(setlistAnnotatedString, footnoteAnnotatedStringBuilder.toAnnotatedString())
+    Text(
+        modifier = Modifier.padding(start = 6.dp, top = 24.dp, end = 6.dp),
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Bold,
+        text = context.resources.getString(R.string.read_on_phish_net)
+    )
+
+    Text(
+        modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+        text = annotatedString
+    )
 }
 
 /**

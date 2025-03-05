@@ -21,4 +21,6 @@
     <string name="setlist_encore">Encore: </string>
     <string name="setlist_footnotes">Footnotes:</string>
     <string name="setlist_notes">Setlist notes:</string>
+
+    <string name="read_on_phish_net">Read on phish.net website:</string>
 </resources>
