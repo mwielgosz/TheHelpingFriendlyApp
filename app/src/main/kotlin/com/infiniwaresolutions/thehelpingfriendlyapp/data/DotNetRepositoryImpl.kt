@@ -1,4 +1,4 @@
-package com.infiniwaresolutions.thehelpingfriendlyapp.data.network
+package com.infiniwaresolutions.thehelpingfriendlyapp.data
 
 import retrofit2.HttpException
 import retrofit2.Response

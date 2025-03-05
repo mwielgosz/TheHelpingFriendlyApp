@@ -3,11 +3,11 @@ package com.infiniwaresolutions.thehelpingfriendlyapp.ui.show
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.ShowData
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.DotNetSetlistData
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.Resource
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.Resource
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetDotNetSetlistByShowIdUseCase
-import com.infiniwaresolutions.thehelpingfriendlyapp.helpers.organizeDataFromJson
+import com.infiniwaresolutions.thehelpingfriendlyapp.helpers.organizeDotNetSetlist
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -28,7 +28,7 @@ data class ShowDataDetailViewState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val showId: Int? = null,
-    val showData: List<ShowData> = emptyList(),
+    val dotNetData: List<DotNetSetlistSongData> = listOf(),
     val errorMessage: String? = null
 )
 
@@ -93,11 +93,11 @@ class ShowDataDetailViewModelCollection @AssistedInject constructor(
         _state.update { currentState ->
             when (data) {
                 is DotNetSetlistData -> {
-                    val sortedShowDataList: List<ShowData> =
-                        organizeDataFromJson(data.dotNetSongEntities, true)
+                    val sortedShowDataList: List<List<DotNetSetlistSongData>> =
+                        organizeDotNetSetlist(data.dotNetSongEntities, true)
                     currentState.copy(
                         isLoading = false,
-                        showData = sortedShowDataList,
+                        dotNetData = sortedShowDataList.first(),
                         errorMessage = null
                     )
                 }

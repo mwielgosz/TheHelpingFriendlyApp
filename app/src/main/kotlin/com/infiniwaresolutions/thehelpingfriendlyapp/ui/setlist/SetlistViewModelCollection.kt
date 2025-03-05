@@ -2,13 +2,13 @@ package com.infiniwaresolutions.thehelpingfriendlyapp.ui.setlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.ShowData
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.DotNetSetlistData
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.Resource
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.Resource
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetAllDotNetSetlistsByLimitUseCase
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetAllDotNetSetlistsUseCase
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetDotNetSearchByShowDateUseCase
-import com.infiniwaresolutions.thehelpingfriendlyapp.helpers.organizeDataFromJson
+import com.infiniwaresolutions.thehelpingfriendlyapp.helpers.organizeDotNetSetlist
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -30,7 +30,7 @@ data class SetlistViewState(
     val isSearch: Boolean,
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
-    val showData: List<ShowData> = emptyList(),
+    val dotNetSetlistSongData: List<List<DotNetSetlistSongData>> = listOf(),
     val showDate: String? = null,
     val errorMessage: String? = null
 )
@@ -105,11 +105,11 @@ class SetlistViewModelCollection @AssistedInject constructor(
         _state.update { currentState ->
             when (data) {
                 is DotNetSetlistData -> {
-                    val sortedShowDataList: List<ShowData> =
-                        organizeDataFromJson(data.dotNetSongEntities, isSearch)
+                    val sortedShowDataList: List<List<DotNetSetlistSongData>> =
+                        organizeDotNetSetlist(data.dotNetSongEntities, isSearch)
                     currentState.copy(
                         isLoading = false,
-                        showData = sortedShowDataList,
+                        dotNetSetlistSongData = sortedShowDataList,
                         errorMessage = null
                     )
                 }

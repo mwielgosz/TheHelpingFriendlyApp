@@ -20,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -28,11 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.ShowData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.LoadingIndicator
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.NoDataErrorText
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.PullToRefreshBox
-import com.infiniwaresolutions.thehelpingfriendlyapp.ui.buildSetlistAnnotatedString
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.buildSetlistAndFooterAnnotatedString
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -45,11 +44,11 @@ fun SetlistScreen(
     viewModel: SetlistViewModelCollection = hiltViewModel<SetlistViewModelCollection, SetlistViewModelCollection.ViewModelFactory> { factory ->
         factory.create(isSearch, showDate)
     },
-    onShowCardClicked: (ShowData) -> Unit
+    onShowCardClicked: (DotNetSetlistSongData) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    if (state.showData.isNotEmpty() && !state.isLoading) {
+    if (state.dotNetSetlistSongData.isNotEmpty() && !state.isLoading) {
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
             onRefresh = { viewModel.sendIntent(SetlistIntent.GetAllSetlists) },
@@ -78,15 +77,15 @@ fun SetlistScreen(
 @Composable
 fun SetlistCardList(
     state: SetlistViewState,
-    onCardClicked: (ShowData) -> Unit
+    onCardClicked: (DotNetSetlistSongData) -> Unit
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(4.dp)
     ) {
-        items(state.showData) { showData ->
+        items(state.dotNetSetlistSongData) { dotNetData ->
             SetlistCard(
-                showData = showData,
+                dotNetData = dotNetData,
                 onCardClicked = { show ->
                     onCardClicked(show)
                 }
@@ -97,11 +96,11 @@ fun SetlistCardList(
 
 @Composable
 fun SetlistCard(
-    showData: ShowData,
-    onCardClicked: (ShowData) -> Unit,
+    dotNetData: List<DotNetSetlistSongData>,
+    onCardClicked: (DotNetSetlistSongData) -> Unit,
 ) {
     Card(modifier = Modifier
-        .clickable { onCardClicked(showData) },
+        .clickable { onCardClicked(dotNetData.first()) },
         border = BorderStroke(1.dp, Color.Gray),
         elevation = CardDefaults.cardElevation(4.dp),
         content = {
@@ -111,7 +110,7 @@ fun SetlistCard(
             ) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     // Artist name
-                    showData.artistName?.let {
+                    dotNetData.first().artistName?.let {
                         Text(
                             modifier = Modifier
                                 .padding(6.dp)
@@ -123,7 +122,7 @@ fun SetlistCard(
                     }
 
                     // Show date
-                    showData.showDate?.let {
+                    dotNetData.first().showDate?.let {
                         // Format date from "yyyy-mm-dd" to "January 1, 2025"
                         val date = LocalDate.parse(it)
                         val formattedDate = date.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
@@ -144,34 +143,34 @@ fun SetlistCard(
                             .padding(8.dp)
                             .weight(1f)
                             .wrapContentWidth(Alignment.Start),
-                        text = "${showData.venue}"
+                        text = "${dotNetData.first().venue}"
                     )
 
-                    var stateOrCountry = showData.state
-                    if (stateOrCountry == "") stateOrCountry = showData.country
+                    var stateOrCountry = dotNetData.first().state
+                    if (stateOrCountry == "") stateOrCountry = dotNetData.first().country
                     Text(
                         modifier = Modifier
                             .padding(8.dp)
                             .weight(1f)
                             .wrapContentWidth(Alignment.End),
                         textAlign = TextAlign.End,
-                        text = "${showData.city}, $stateOrCountry",
+                        text = "${dotNetData.first().city}, $stateOrCountry",
                     )
                 }
 
-                // Build string with all setlist data
-                val songsStr = buildSetlistAnnotatedString(
-                    context = LocalContext.current,
-                    showData = showData,
+                // Soundcheck, setlist, and footnote builder
+                val setlistFooterBuilder = buildSetlistAndFooterAnnotatedString(
+                    dotNetData = dotNetData,
                     includeSoundcheck = true,
-                    includeFooter = false
+                    includeFootnotes = false,
                 )
 
-                // Setlist, soundcheck & footer
+                // Setlist
                 Text(
                     modifier = Modifier.padding(6.dp),
-                    text = songsStr
+                    text = setlistFooterBuilder.first
                 )
+
             }
         }
     )

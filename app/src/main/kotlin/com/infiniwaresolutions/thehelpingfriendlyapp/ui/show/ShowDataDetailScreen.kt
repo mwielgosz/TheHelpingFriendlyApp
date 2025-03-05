@@ -15,11 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,7 +25,7 @@ import com.infiniwaresolutions.thehelpingfriendlyapp.ui.BuildSetlistNotes
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.LoadingIndicator
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.NoDataErrorText
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.PullToRefreshBox
-import com.infiniwaresolutions.thehelpingfriendlyapp.ui.buildSetlistAnnotatedString
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.buildSetlistAndFooterAnnotatedString
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -45,7 +41,7 @@ fun ShowDataDetailScreen(
 
     val context = LocalContext.current
 
-    if (state.showData.isNotEmpty() && !state.isLoading) {
+    if (state.dotNetData.isNotEmpty() && !state.isLoading) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -59,7 +55,7 @@ fun ShowDataDetailScreen(
             ) {
                 Column {
                     // Artist name
-                    state.showData.first().artistName?.let {
+                    state.dotNetData.first().artistName?.let {
                         Text(
                             modifier = Modifier
                                 .padding(6.dp),
@@ -70,7 +66,7 @@ fun ShowDataDetailScreen(
                     }
 
                     // Show date
-                    state.showData.first().showDate?.let { date ->
+                    state.dotNetData.first().showDate?.let { date ->
                         // Format date from "yyyy-mm-dd" to "January 1, 2025"
                         val formattedDate =
                             LocalDate.parse(date)
@@ -87,26 +83,25 @@ fun ShowDataDetailScreen(
                     Text(
                         modifier = Modifier.padding(6.dp),
                         fontSize = 18.sp,
-                        text = "${state.showData.first().venue}\n${state.showData.first().city}, ${state.showData.first().state}\n"
+                        text = "${state.dotNetData.first().venue}\n${state.dotNetData.first().city}, ${state.dotNetData.first().state}\n"
                     )
 
-                    // Build string with all setlist data
-                    val songsStr = buildSetlistAnnotatedString(
-                        context = context,
-                        showData = state.showData.first(),
+                    // Soundcheck, setlist, and footnote builder
+                    val setlistFooterBuilder = buildSetlistAndFooterAnnotatedString(
+                        dotNetData = state.dotNetData,
                         includeSoundcheck = true,
-                        includeFooter = true
+                        includeFootnotes = true,
                     )
 
-                    // Soundcheck & setlist
+                    // Setlist
                     Text(
                         modifier = Modifier.padding(6.dp),
-                        text = songsStr
+                        text = setlistFooterBuilder.first
                     )
 
-                    // Footer
-                    // Include 'footer' meanings if enabled & present: "[1] This is a footer."
-                    if (state.showData.first().footnoteList.isNotEmpty()) {
+                    // Footnotes
+                    // Include 'footnote' meanings if enabled & present: "[1] This is a footer."
+                    if (setlistFooterBuilder.second.isNotEmpty()) {
                         Text(
                             modifier = Modifier.padding(start = 6.dp, end = 6.dp),
                             fontSize = 18.sp,
@@ -114,30 +109,16 @@ fun ShowDataDetailScreen(
                             text = "\n${context.resources.getString(R.string.setlist_footnotes)}"
                         )
 
-                        for (j in state.showData.first().footnoteList.indices) {
-                            val footerStr: AnnotatedString = buildAnnotatedString {
-
-                                val footer = state.showData.first().footnoteList[j]
-                                // Add footer number in bracket: "[1]"
-                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append("[${j + 1}] ")
-                                }
-                                // Add footer text
-                                append(footer)
-
-
-                            }
-                            Text(
-                                modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-                                text = footerStr
-                            )
-                        }
+                        Text(
+                            modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+                            text = setlistFooterBuilder.second
+                        )
                     }
 
                     // Setlist notes
                     BuildSetlistNotes(
                         LocalContext.current,
-                        state.showData.first().setlistNotes.toString(),
+                        state.dotNetData.first().setlistNotes.toString(),
                         true
                     )
                 }

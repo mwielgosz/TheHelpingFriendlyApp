@@ -12,8 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.local.ShowData
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.DotNetShow
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetShow
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.allShows.AllShowsScreen
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.setlist.SetlistScreen
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.show.ShowDataDetailScreen
@@ -100,15 +100,15 @@ fun NavigationGraph(
         }
 
         // From Setlist
-        composable<ShowData> { backStackEntry ->
-            val showData: ShowData = backStackEntry.toRoute()
-            val formattedDate = LocalDate.parse(showData.showDate.toString())
+        composable<DotNetSetlistSongData> { backStackEntry ->
+            val dotNetData: DotNetSetlistSongData = backStackEntry.toRoute()
+            val formattedDate = LocalDate.parse(dotNetData.showDate.toString())
                 .format(DateTimeFormatter.ofPattern("M/d/yyyy"))
             topAppBarTitle("${stringResource(R.string.setlist)} - $formattedDate")
             isBottomBarVisible(false)
             isBackButtonVisible(true)
             isSearchButtonVisible(false)
-            ShowDataDetailScreen(showData.showId)
+            ShowDataDetailScreen(dotNetData.showId)
         }
         //composable(
         //    "${Routes.SetlistDetailRoute.route}/{showId}",

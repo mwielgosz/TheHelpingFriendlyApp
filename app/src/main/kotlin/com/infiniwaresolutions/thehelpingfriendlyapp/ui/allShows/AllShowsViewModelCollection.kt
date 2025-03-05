@@ -2,9 +2,9 @@ package com.infiniwaresolutions.thehelpingfriendlyapp.ui.allShows
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.DotNetShow
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.DotNetShowData
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.network.Resource
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetShow
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetShowData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.Resource
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetAllDotNetShowsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

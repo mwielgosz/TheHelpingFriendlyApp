@@ -1,4 +1,4 @@
-package com.infiniwaresolutions.thehelpingfriendlyapp.data.network
+package com.infiniwaresolutions.thehelpingfriendlyapp.data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -7,11 +7,11 @@ import kotlinx.serialization.Serializable
 data class DotNetSetlistData(
     @SerialName(value = "error") val error: Boolean? = null,
     @SerialName(value = "error_message") val errorMessage: String? = null,
-    @SerialName(value = "data") val dotNetSongEntities: List<DotNetSongData> = listOf()
+    @SerialName(value = "data") val dotNetSongEntities: List<DotNetSetlistSongData> = listOf()
 )
 
 @Serializable
-data class DotNetSongData(
+data class DotNetSetlistSongData(
     @SerialName(value = "showid") val showId: Int? = null,
     @SerialName(value = "showdate") val showDate: String? = null,
     @SerialName(value = "permalink") val permalink: String? = null,
@@ -25,7 +25,7 @@ data class DotNetSongData(
     @SerialName(value = "songid") val songId: Int? = null,
     @SerialName(value = "position") val position: Int? = null,
     @SerialName(value = "transition") val transition: Int? = null,
-    @SerialName(value = "footnote") val footnote: String? = null,
+    @SerialName(value = "footnote") var footnote: String? = null,
     @SerialName(value = "set") val set: String? = null,
     @SerialName(value = "isjam") val isJam: Int? = null,
     @SerialName(value = "isreprise") val isReprise: Int? = null,

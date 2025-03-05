@@ -1,4 +1,4 @@
-package com.infiniwaresolutions.thehelpingfriendlyapp.data.network
+package com.infiniwaresolutions.thehelpingfriendlyapp.data
 
 import dagger.Binds
 import dagger.Module

@@ -1,4 +1,4 @@
-package com.infiniwaresolutions.thehelpingfriendlyapp.data.network
+package com.infiniwaresolutions.thehelpingfriendlyapp.data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
