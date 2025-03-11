@@ -6,17 +6,21 @@
     <string name="all_shows">All Shows</string>
     <string name="search">Search</string>
     <string name="search_icon">Search icon</string>
-    <string name="search_by_date">Search by date</string>
+    <string name="search_setlists_by_date">Search setlists by date</string>
     <string name="setlist_info">Setlist Information</string>
 
     <string name="loading">Loading</string>
     <string name="loading_failed">Failed to load</string>
+    <string name="no_data_for_search">Search returned no results!</string>
     <string name="no_data_pull_refresh">No data found\nPull from top to refresh</string>
 
+    <string name="setlist">Setlist</string>
     <string name="setlist_soundcheck">Soundcheck:</string>
     <string name="setlist_set">Set</string>
     <string name="setlist_set_1">Set 1: </string>
     <string name="setlist_encore">Encore: </string>
     <string name="setlist_footnotes">Footnotes:</string>
     <string name="setlist_notes">Setlist notes:</string>
+
+    <string name="read_on_phish_net">Read on phish.net website:</string>
 </resources>

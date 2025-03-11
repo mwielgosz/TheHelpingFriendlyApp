@@ -1,10 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlinAndroidKsp)
-    alias(libs.plugins.hiltAndroid)
-    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlin.android.ksp)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.room)
 }
 
 android {
@@ -19,6 +20,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+            arg("room.generateKotlin", "true")
+        }
     }
 
     buildTypes {
@@ -44,6 +50,10 @@ android {
     }
 }
 
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
 dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.androidx.core.ktx)
@@ -54,22 +64,26 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation (libs.androidx.material.icons.extended)
-    implementation(libs.androidx.navigation.compose.v276)
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.navigation.compose)
     // Retrofit with Kotlinx Converter & OkHttp
     implementation(libs.retrofit)
     implementation(libs.converter.kotlinx.serialization)
-    implementation (libs.okhttp.logging.interceptor)
+    implementation(libs.okhttp.logging.interceptor)
     // Kotlin serialization
     implementation(libs.kotlinx.serialization.json)
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
-    ksp (libs.hilt.androidx.compiler)
+    ksp(libs.hilt.androidx.compiler)
     ksp(libs.dagger.hilt.compiler)
     // Kotlin Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
