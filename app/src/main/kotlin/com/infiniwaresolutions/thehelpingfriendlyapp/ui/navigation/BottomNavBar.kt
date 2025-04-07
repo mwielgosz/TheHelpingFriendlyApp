@@ -1,6 +1,5 @@
 package com.infiniwaresolutions.thehelpingfriendlyapp.ui.navigation
 
-import android.util.Log
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -13,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.infiniwaresolutions.thehelpingfriendlyapp.TAG
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.theme.PurpleMain
 
 @Composable
@@ -44,7 +42,7 @@ fun BottomNavBar(
                 selected = currentRoute == screen.route,
                 onClick = {
                     navController.navigate(screen.route) {
-                        Log.d(TAG, "Selected screen: ${screen.label}")
+                        //Log.d("BottomNavBar", "Selected screen: ${screen.label}")
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
