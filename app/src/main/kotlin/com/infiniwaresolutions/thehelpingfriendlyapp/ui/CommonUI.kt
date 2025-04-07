@@ -54,7 +54,7 @@ sealed class UIErrorType {
 }
 
 /**
- * Returns a [CircularProgressIndicator] visual for loading data.
+ * A layout [Composable] of [CircularProgressIndicator] visual for loading data
  */
 @Composable
 fun LoadingIndicator() {
@@ -74,7 +74,7 @@ fun LoadingIndicatorPreview() {
 }
 
 /**
- * Returns a [Composable] [Button] to be used app-wide
+ * A layout [Composable] [Button] to be used app-wide
  * @param buttonStr [String] to display on [Button]
  */
 @Composable
@@ -91,7 +91,7 @@ fun FilledButton(buttonStr: String, onClick: () -> Unit) {
 }
 
 /**
- * Returns a [Composable] that displays [errorStr] text
+ * A layout [Composable] that displays [errorStr] text
  */
 @Composable
 fun ErrorText(errorStr: String) {
@@ -111,7 +111,7 @@ fun ErrorTextPreview() {
 }
 
 /**
- * Returns a [Composable] with [ErrorText] above [FilledButton]
+ * A layout [Composable] with [ErrorText] above [FilledButton]
  * @param errorStr [String] text for [ErrorText]
  * @param buttonStr [String] text for [FilledButton]
  */
@@ -134,7 +134,7 @@ fun ErrorTextWithButtonPreview() {
 }
 
 /**
- * Returns a [Composable] for a vertical ScrollView with Pull to Refresh capabilities.
+ * A layout [Composable] for a vertical ScrollView with Pull to Refresh capabilities.
  */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -360,7 +360,7 @@ fun isDateValidAndFormat(dateStr: String): String? {
             val dateFormatter = DateTimeFormatter.ofPattern(format)
             val date = LocalDate.parse(dateStr, dateFormatter)
             return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // Continue to the next format if parsing fails
         }
     }
