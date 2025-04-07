@@ -1,23 +1,23 @@
 [versions]
-agp = "8.9.0"
+agp = "8.9.1"
 composeActivity = "1.10.1"
-composeBom = "2025.02.00"
+composeBom = "2025.03.01"
 desugarJdkLibs = "2.1.5"
 espressoCore = "3.6.1"
 hiltNavigationCompose = "1.2.0"
-hilt = "2.55"
+hilt = "2.56.1"
 hiltAndroidx = "1.2.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 kotlin = "2.1.10"
 kotlinxCoroutines = "1.10.1"
-kotlinx-serialization-converter = "2.11.0"
-kotlinxSerializationJson = "1.8.0"
+kotlinxSerializationConverter = "2.11.0"
+kotlinxSerializationJson = "1.8.1"
 ksp = "2.1.10-1.0.31"
 lifecycleRuntimeKtx = "2.8.7"
 materialIconsExtended = "1.7.8"
-navigationComposeVersion = "2.8.8"
+navigationComposeVersion = "2.8.9"
 okhttpLoggingInterceptor = "4.12.0"
 retrofit = "2.11.0"
 room = "2.6.1"
@@ -27,7 +27,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
-converter-kotlinx-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "kotlinx-serialization-converter" }
+converter-kotlinx-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "kotlinxSerializationConverter" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
