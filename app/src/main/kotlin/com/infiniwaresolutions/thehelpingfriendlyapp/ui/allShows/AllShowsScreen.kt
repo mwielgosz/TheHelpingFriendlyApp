@@ -31,9 +31,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetShow
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.BuildSetlistNotes
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.ErrorTextWithButton
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.LoadingIndicator
-import com.infiniwaresolutions.thehelpingfriendlyapp.ui.NoDataErrorText
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.PullToRefreshBox
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.UIErrorType
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -45,11 +46,12 @@ fun AllShowsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    if (state.allShowsData.isNotEmpty() && !state.isLoading) {
-        PullToRefreshBox(
-            isRefreshing = state.isRefreshing,
-            onRefresh = { viewModel.sendIntent(AllShowsIntent.GetAllShows) },
-        ) {
+    PullToRefreshBox(
+        isRefreshing = state.isRefreshing,
+        onRefresh = { viewModel.sendIntent(AllShowsIntent.GetAllShows) },
+    ) {
+
+        if (state.allShowsData.isNotEmpty() && !state.isLoading) {
             ShowCardList(
                 state = state,
                 onCardClicked = { show ->
@@ -57,14 +59,22 @@ fun AllShowsScreen(
                     onShowCardClicked(show)
                 }
             )
+        } else if (state.errorMessage == UIErrorType.Network && !state.isLoading) {
+            // - Network
+            ErrorTextWithButton(
+                stringResource(R.string.no_data_network_connectivity),
+                stringResource(R.string.refresh)
+            ) { viewModel.sendIntent(AllShowsIntent.GetAllShows) }
+        } else if (state.isLoading) {
+            // Overlay loading indicator
+            LoadingIndicator()
+        } else {
+            // Fallback error
+            ErrorTextWithButton(
+                stringResource(R.string.no_data),
+                stringResource(R.string.refresh)
+            ) { viewModel.sendIntent(AllShowsIntent.GetAllShows) }
         }
-    } else if (state.errorMessage?.isNotEmpty() == true || !state.isLoading) {
-        NoDataErrorText(stringResource(R.string.no_data_pull_refresh))
-    }
-
-    // Overlay loading indicator
-    if (state.isLoading) {
-        LoadingIndicator()
     }
 }
 
@@ -93,8 +103,9 @@ fun ShowCard(
     dotNetShow: DotNetShow,
     onCardClicked: (DotNetShow) -> Unit,
 ) {
-    Card(modifier = Modifier
-        .clickable { onCardClicked(dotNetShow) },
+    Card(
+        modifier = Modifier
+            .clickable { onCardClicked(dotNetShow) },
         border = BorderStroke(1.dp, Color.Gray),
         elevation = CardDefaults.cardElevation(4.dp),
         content = {

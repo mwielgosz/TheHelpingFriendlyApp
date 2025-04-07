@@ -6,6 +6,7 @@ import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetShow
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetShowData
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.Resource
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetAllDotNetShowsUseCase
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.UIErrorType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +26,7 @@ data class AllShowsViewState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val allShowsData: List<DotNetShow> = emptyList(),
-    val errorMessage: String? = null
+    val errorMessage: UIErrorType = UIErrorType.None
 )
 
 @HiltViewModel
@@ -63,7 +64,13 @@ class AllShowsViewModelCollection @Inject constructor(
             _state.update { it.copy(isLoading = true) }
             when (val result = block()) {
                 is Resource.Success -> handleSuccess(result.data)
-                is Resource.Error -> _state.update { it.copy(isLoading = false) }
+                is Resource.Error -> _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = UIErrorType.Network
+                    )
+                }
+
                 is Resource.Loading -> Unit
             }
         }
@@ -86,11 +93,11 @@ class AllShowsViewModelCollection @Inject constructor(
                     currentState.copy(
                         isLoading = false,
                         allShowsData = allShowData,
-                        errorMessage = null
+                        errorMessage = UIErrorType.None
                     )
                 }
 
-                else -> currentState.copy(isLoading = false, errorMessage = "Unknown data type")
+                else -> currentState.copy(isLoading = false, errorMessage = UIErrorType.Unknown)
             }
         }
     }

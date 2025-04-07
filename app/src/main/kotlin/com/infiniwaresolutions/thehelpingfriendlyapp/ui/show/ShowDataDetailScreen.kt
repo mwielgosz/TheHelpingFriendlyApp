@@ -24,9 +24,11 @@ import com.infiniwaresolutions.thehelpingfriendlyapp.R
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.BuildPhishNetClickableUrlText
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.BuildSetlistAndFooterAnnotatedString
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.BuildSetlistNotes
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.ErrorText
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.ErrorTextWithButton
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.LoadingIndicator
-import com.infiniwaresolutions.thehelpingfriendlyapp.ui.NoDataErrorText
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.PullToRefreshBox
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.UIErrorType
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -112,24 +114,29 @@ fun ShowDataDetailScreen(
                 }
             }
         }
-    } else if (state.errorMessage?.isNotEmpty() == true || !state.isLoading) {
+    } else if (state.errorMessage == UIErrorType.Network && !state.isLoading) {
+        // Error - Network
+        ErrorTextWithButton(
+            stringResource(R.string.no_data_network_connectivity),
+            stringResource(R.string.refresh)
+        ) { viewModel.sendIntent(ShowDataDetailIntent.GetSetlistById(showId = state.showId)) }
+    } else if (state.errorMessage == UIErrorType.NoData && !state.isLoading) {
+        // Error - No data found
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            NoDataErrorText(stringResource(R.string.no_data_pull_refresh))
+            ErrorText(stringResource(R.string.no_data_details))
         }
-    }
-
-    // Overlay loading indicator
-    if (state.isLoading) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            LoadingIndicator()
-        }
+    } else if (state.isLoading) {
+        // Overlay loading indicator
+        LoadingIndicator()
+    } else {
+        // Fallback error
+        ErrorTextWithButton(
+            stringResource(R.string.no_data),
+            stringResource(R.string.refresh)
+        ) { viewModel.sendIntent(ShowDataDetailIntent.GetSetlistById(showId = state.showId)) }
     }
 }

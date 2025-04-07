@@ -8,6 +8,7 @@ import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.Resource
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetDotNetSetlistByShowIdUseCase
 import com.infiniwaresolutions.thehelpingfriendlyapp.helpers.organizeDotNetSetlist
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.UIErrorType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -29,7 +30,7 @@ data class ShowDataDetailViewState(
     val isRefreshing: Boolean = false,
     val showId: Int? = null,
     val dotNetData: List<DotNetSetlistSongData> = listOf(),
-    val errorMessage: String? = null
+    val errorMessage: UIErrorType = UIErrorType.None
 )
 
 @HiltViewModel(assistedFactory = ShowDataDetailViewModelCollection.DetailViewModelFactory::class)
@@ -83,7 +84,13 @@ class ShowDataDetailViewModelCollection @AssistedInject constructor(
             _state.update { it.copy(isLoading = true) }
             when (val result = block()) {
                 is Resource.Success -> handleSuccess(result.data)
-                is Resource.Error -> _state.update { it.copy(isLoading = false) }
+                is Resource.Error -> _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = UIErrorType.Network
+                    )
+                }
+
                 is Resource.Loading -> Unit
             }
         }
@@ -95,14 +102,22 @@ class ShowDataDetailViewModelCollection @AssistedInject constructor(
                 is DotNetSetlistData -> {
                     val sortedShowDataList: List<List<DotNetSetlistSongData>> =
                         organizeDotNetSetlist(data.dotNetSongEntities, true)
-                    currentState.copy(
-                        isLoading = false,
-                        dotNetData = sortedShowDataList.first(),
-                        errorMessage = null
-                    )
+                    if (sortedShowDataList.isNotEmpty()) {
+                        currentState.copy(
+                            isLoading = false,
+                            dotNetData = sortedShowDataList.first(),
+                            errorMessage = UIErrorType.None
+                        )
+                    } else {
+                        currentState.copy(
+                            isLoading = false,
+                            dotNetData = listOf(),
+                            errorMessage = UIErrorType.NoData
+                        )
+                    }
                 }
 
-                else -> currentState.copy(isLoading = false, errorMessage = "Unknown data type")
+                else -> currentState.copy(isLoading = false, errorMessage = UIErrorType.Unknown)
             }
         }
     }

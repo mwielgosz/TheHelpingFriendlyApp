@@ -4,9 +4,13 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -29,14 +33,25 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.theme.PurpleMain
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+/**
+ * Error types used for displaying proper error to user from view models
+ */
+sealed class UIErrorType {
+    data object None : UIErrorType()
+    data object NoData : UIErrorType()
+    data object Network : UIErrorType()
+    data object Unknown : UIErrorType()
+}
 
 /**
  * Returns a [CircularProgressIndicator] visual for loading data.
@@ -52,18 +67,70 @@ fun LoadingIndicator() {
     }
 }
 
+@Preview
+@Composable
+fun LoadingIndicatorPreview() {
+    LoadingIndicator()
+}
+
 /**
- * Returns a [Composable] that displays [errorStr] text.
+ * Returns a [Composable] [Button] to be used app-wide
+ * @param buttonStr [String] to display on [Button]
  */
 @Composable
-fun NoDataErrorText(errorStr: String) {
+fun FilledButton(buttonStr: String, onClick: () -> Unit) {
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.Center),
+        colors = ButtonDefaults.buttonColors(containerColor = PurpleMain),
+        onClick = { onClick() }
+    ) {
+        Text(text = buttonStr, color = Color.White)
+    }
+}
+
+/**
+ * Returns a [Composable] that displays [errorStr] text
+ */
+@Composable
+fun ErrorText(errorStr: String) {
     Text(
         text = errorStr,
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .wrapContentSize(Alignment.Center),
         textAlign = TextAlign.Center
     )
+}
+
+@Preview
+@Composable
+fun ErrorTextPreview() {
+    ErrorText("Some error text")
+}
+
+/**
+ * Returns a [Composable] with [ErrorText] above [FilledButton]
+ * @param errorStr [String] text for [ErrorText]
+ * @param buttonStr [String] text for [FilledButton]
+ */
+@Composable
+fun ErrorTextWithButton(errorStr: String, buttonStr: String, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.Center)
+    ) {
+        ErrorText(errorStr)
+        FilledButton(buttonStr) { onClick() }
+    }
+}
+
+@Preview
+@Composable
+fun ErrorTextWithButtonPreview() {
+    ErrorTextWithButton("Test text", "Button text") { }
 }
 
 /**

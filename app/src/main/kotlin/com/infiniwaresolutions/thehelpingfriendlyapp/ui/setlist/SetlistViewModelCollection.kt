@@ -9,6 +9,7 @@ import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetAllDotNetSetlists
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetAllDotNetSetlistsUseCase
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetDotNetSearchByShowDateUseCase
 import com.infiniwaresolutions.thehelpingfriendlyapp.helpers.organizeDotNetSetlist
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.UIErrorType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -32,7 +33,7 @@ data class SetlistViewState(
     val isRefreshing: Boolean = false,
     val dotNetSetlistSongData: List<List<DotNetSetlistSongData>> = listOf(),
     val showDate: String? = null,
-    val errorMessage: String? = null
+    val errorMessage: UIErrorType = UIErrorType.None
 )
 
 @HiltViewModel(assistedFactory = SetlistViewModelCollection.ViewModelFactory::class)
@@ -95,7 +96,13 @@ class SetlistViewModelCollection @AssistedInject constructor(
             _state.update { it.copy(isLoading = true) }
             when (val result = block()) {
                 is Resource.Success -> handleSuccess(result.data)
-                is Resource.Error -> _state.update { it.copy(isLoading = false) }
+                is Resource.Error -> _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = UIErrorType.Network
+                    )
+                }
+
                 is Resource.Loading -> Unit
             }
         }
@@ -110,14 +117,14 @@ class SetlistViewModelCollection @AssistedInject constructor(
                     currentState.copy(
                         isLoading = false,
                         dotNetSetlistSongData = sortedShowDataList,
-                        errorMessage = null
+                        errorMessage = UIErrorType.None
                     )
                 }
                 /*is List<*> -> {
                     val sortedShowDataList: List<ShowData> = organizeDataFromJson(data.filterIsInstance<DotNetSongData>())
                     currentState.copy(isLoading = false, showData = sortedShowDataList, errorMessage = null)
                 }*/
-                else -> currentState.copy(isLoading = false, errorMessage = "Unknown data type")
+                else -> currentState.copy(isLoading = false, errorMessage = UIErrorType.Unknown)
             }
         }
     }

@@ -30,9 +30,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
 import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.BuildSetlistAndFooterAnnotatedString
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.ErrorTextWithButton
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.LoadingIndicator
-import com.infiniwaresolutions.thehelpingfriendlyapp.ui.NoDataErrorText
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.PullToRefreshBox
+import com.infiniwaresolutions.thehelpingfriendlyapp.ui.UIErrorType
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -49,29 +50,34 @@ fun SetlistScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    if (state.dotNetSetlistSongData.isNotEmpty() && !state.isLoading) {
-        PullToRefreshBox(
-            isRefreshing = state.isRefreshing,
-            onRefresh = { viewModel.sendIntent(SetlistIntent.GetAllSetlists) },
-        ) {
+    PullToRefreshBox(
+        isRefreshing = state.isRefreshing,
+        onRefresh = { viewModel.sendIntent(SetlistIntent.GetAllSetlists) },
+    ) {
+
+        if (state.dotNetSetlistSongData.isNotEmpty() && !state.isLoading) {
             SetlistCardList(
                 state = state,
                 onCardClicked = { show ->
                     onShowCardClicked(show)
                 }
             )
-        }
-    } else if (state.errorMessage?.isNotEmpty() == true || !state.isLoading) {
-        if (isSearch) {
-            NoDataErrorText(stringResource(R.string.no_data_for_search))
+        } else if (state.errorMessage == UIErrorType.Network && !state.isLoading) {
+            // Error - Network
+            ErrorTextWithButton(
+                stringResource(R.string.no_data_network_connectivity),
+                stringResource(R.string.refresh)
+            ) { viewModel.sendIntent(SetlistIntent.GetAllSetlists) }
+        } else if (state.isLoading) {
+            // Overlay loading indicator
+            LoadingIndicator()
         } else {
-            stringResource(R.string.no_data_pull_refresh)
+            // Fallback error
+            ErrorTextWithButton(
+                stringResource(R.string.no_data),
+                stringResource(R.string.refresh)
+            ) { viewModel.sendIntent(SetlistIntent.GetAllSetlists) }
         }
-    }
-
-    // Overlay loading indicator
-    if (state.isLoading) {
-        LoadingIndicator()
     }
 }
 
@@ -100,8 +106,9 @@ fun SetlistCard(
     dotNetData: List<DotNetSetlistSongData>,
     onCardClicked: (DotNetSetlistSongData) -> Unit,
 ) {
-    Card(modifier = Modifier
-        .clickable { onCardClicked(dotNetData.first()) },
+    Card(
+        modifier = Modifier
+            .clickable { onCardClicked(dotNetData.first()) },
         border = BorderStroke(1.dp, Color.Gray),
         elevation = CardDefaults.cardElevation(4.dp),
         content = {
