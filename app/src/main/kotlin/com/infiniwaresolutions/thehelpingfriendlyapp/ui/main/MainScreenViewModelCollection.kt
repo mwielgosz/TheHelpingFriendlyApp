@@ -55,8 +55,8 @@ class MainScreenViewModelCollection @Inject constructor(
     fun sendIntent(intent: MainScreenIntent) {
         viewModelScope.launch {
             _intentChannel.send(intent)
+            handleIntents()
         }
-
     }
 
     private fun handleIntents() {
