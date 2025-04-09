@@ -1,6 +1,7 @@
-package com.infiniwaresolutions.thehelpingfriendlyapp.data
+package com.infiniwaresolutions.thehelpingfriendlyapp.data.remote
 
-
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetSetlistData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetShowData
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

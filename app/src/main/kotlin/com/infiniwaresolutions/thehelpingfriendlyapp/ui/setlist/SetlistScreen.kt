@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetSetlistSongData
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.BuildSetlistAndFooterAnnotatedString
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.ErrorTextWithButton
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.LoadingIndicator

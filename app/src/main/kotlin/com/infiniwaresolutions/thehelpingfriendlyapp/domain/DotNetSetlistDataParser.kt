@@ -1,6 +1,6 @@
-package com.infiniwaresolutions.thehelpingfriendlyapp.helpers
+package com.infiniwaresolutions.thehelpingfriendlyapp.domain
 
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetSetlistSongData
 
 
 /**

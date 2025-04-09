@@ -3,11 +3,11 @@ package com.infiniwaresolutions.thehelpingfriendlyapp.ui.show
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistData
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.Resource
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetSetlistData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetSetlistSongData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.remote.Resource
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetDotNetSetlistByShowIdUseCase
-import com.infiniwaresolutions.thehelpingfriendlyapp.helpers.organizeDotNetSetlist
+import com.infiniwaresolutions.thehelpingfriendlyapp.domain.organizeDotNetSetlist
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.UIErrorType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

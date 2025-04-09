@@ -1,9 +1,9 @@
 package com.infiniwaresolutions.thehelpingfriendlyapp.domain
 
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetRepository
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistData
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetShowData
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.Resource
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.remote.DotNetRepository
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetSetlistData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetShowData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.remote.Resource
 import javax.inject.Inject
 
 class GetAllDotNetShowsUseCase @Inject constructor(private val repository: DotNetRepository) {

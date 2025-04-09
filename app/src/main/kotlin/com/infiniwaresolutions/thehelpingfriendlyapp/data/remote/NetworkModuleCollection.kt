@@ -1,4 +1,4 @@
-package com.infiniwaresolutions.thehelpingfriendlyapp.data
+package com.infiniwaresolutions.thehelpingfriendlyapp.data.remote
 
 import android.content.Context
 import android.net.ConnectivityManager

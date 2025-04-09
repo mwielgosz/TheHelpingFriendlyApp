@@ -2,13 +2,13 @@ package com.infiniwaresolutions.thehelpingfriendlyapp.ui.setlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistData
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.Resource
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetSetlistData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetSetlistSongData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.remote.Resource
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetAllDotNetSetlistsByLimitUseCase
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetAllDotNetSetlistsUseCase
 import com.infiniwaresolutions.thehelpingfriendlyapp.domain.GetDotNetSearchByShowDateUseCase
-import com.infiniwaresolutions.thehelpingfriendlyapp.helpers.organizeDotNetSetlist
+import com.infiniwaresolutions.thehelpingfriendlyapp.domain.organizeDotNetSetlist
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.UIErrorType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

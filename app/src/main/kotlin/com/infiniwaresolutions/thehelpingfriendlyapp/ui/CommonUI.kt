@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetSetlistSongData
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.theme.PurpleMain
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

@@ -1,5 +1,7 @@
-package com.infiniwaresolutions.thehelpingfriendlyapp.data
+package com.infiniwaresolutions.thehelpingfriendlyapp.data.remote
 
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetSetlistData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetShowData
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

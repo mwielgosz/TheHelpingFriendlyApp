@@ -1,5 +1,7 @@
-package com.infiniwaresolutions.thehelpingfriendlyapp.data
+package com.infiniwaresolutions.thehelpingfriendlyapp.data.remote
 
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetSetlistData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetShowData
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException

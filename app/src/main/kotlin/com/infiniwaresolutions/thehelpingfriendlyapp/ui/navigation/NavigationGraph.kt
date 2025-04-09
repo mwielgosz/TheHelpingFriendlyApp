@@ -12,8 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import com.infiniwaresolutions.thehelpingfriendlyapp.R
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetShow
-import com.infiniwaresolutions.thehelpingfriendlyapp.data.DotNetSetlistSongData
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetShow
+import com.infiniwaresolutions.thehelpingfriendlyapp.data.models.DotNetSetlistSongData
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.allShows.AllShowsScreen
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.setlist.SetlistScreen
 import com.infiniwaresolutions.thehelpingfriendlyapp.ui.show.ShowDataDetailScreen
